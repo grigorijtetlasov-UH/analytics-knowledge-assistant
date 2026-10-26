@@ -90,7 +90,7 @@ def test_project_migrations_are_well_formed() -> None:
 @pytest.mark.db
 def test_migrate_creates_schema_and_is_idempotent(db_conn: psycopg.Connection) -> None:
     applied = migrate(db_conn)
-    assert [m.version for m in applied] == ["001", "002"]
+    assert [m.version for m in applied] == [m.version for m in discover_migrations()]
 
     tables = db_conn.execute(
         "SELECT table_name FROM information_schema.tables WHERE table_schema = 'olist'"

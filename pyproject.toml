@@ -9,6 +9,8 @@ dependencies = [
     # [binary] bundles libpq, so nothing extra has to be installed on Windows or in CI.
     "psycopg[binary]>=3.2",
     "pydantic-settings>=2.4",
+    # Parses the YAML frontmatter of data/docs/*.md (safe_load only: no arbitrary objects).
+    "pyyaml>=6.0",
 ]
 
 [dependency-groups]
