@@ -64,3 +64,4 @@ docker-compose.yml, pyproject.toml, .env.example, README.md
 - Every new feature comes with a test or an eval case.
 - Keep functions small and typed; ruff must pass.
 - Before writing code for a milestone, propose a short plan and wait for approval.
+- Communicate with me in Ukrainian. Keep code, comments, commit messages, README and docs in English.
