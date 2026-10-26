@@ -26,7 +26,7 @@ from openai import OpenAI
 from app.config import get_settings
 from app.db import connect
 from app.embeddings import Embedder, OpenAIEmbedder
-from app.retrieval import SearchResult, search_vector
+from app.retrieval import SearchResult, search_fulltext, search_hybrid, search_vector
 
 TESTSET_PATH = Path("evals/testset.json")
 RESULTS_DIR = Path("evals/results")
@@ -58,6 +58,8 @@ SearchFn = Callable[[psycopg.Connection, Query], list[SearchResult]]
 
 MODES: dict[str, SearchFn] = {
     "vector": lambda conn, q: search_vector(conn, q.embedding, q.model, K),
+    "fulltext": lambda conn, q: search_fulltext(conn, q.text, K),
+    "hybrid": lambda conn, q: search_hybrid(conn, q.text, q.embedding, q.model, K),
 }
 
 
