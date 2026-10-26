@@ -1,5 +1,4 @@
 import hashlib
-import random
 import shutil
 from pathlib import Path
 
@@ -7,28 +6,10 @@ import psycopg
 import pytest
 
 from app.docs import chunk_document, load_documents
-from app.ingest import content_hash, ingest, vector_literal
+from app.embeddings import vector_literal
+from app.ingest import content_hash, ingest
 from app.migrate import migrate
-
-DIMENSIONS = 1536  # must match rag.chunks.embedding
-
-
-class FakeEmbedder:
-    """Deterministic embeddings derived from a hash of the text; records what it embedded."""
-
-    def __init__(self, model: str = "fake-model") -> None:
-        self.model = model
-        self.embedded: list[str] = []
-
-    def embed(self, texts: list[str]) -> list[list[float]]:
-        self.embedded += texts
-        return [self._vector(text) for text in texts]
-
-    @staticmethod
-    def _vector(text: str) -> list[float]:
-        seed = int.from_bytes(hashlib.sha256(text.encode("utf-8")).digest()[:8], "big")
-        rng = random.Random(seed)
-        return [rng.uniform(-1, 1) for _ in range(DIMENSIONS)]
+from tests.fakes import FakeEmbedder
 
 
 @pytest.fixture
@@ -79,7 +60,7 @@ def test_first_ingest_stores_every_chunk(rag_conn: psycopg.Connection, docs_dir:
         "SELECT content, embedding::text FROM rag.chunks ORDER BY id LIMIT 1"
     ).fetchone()
     stored = [float(x) for x in embedding.strip("[]").split(",")]
-    assert stored == pytest.approx(FakeEmbedder._vector(content), abs=1e-6)
+    assert stored == pytest.approx(FakeEmbedder.vector(content), abs=1e-6)
 
 
 @pytest.mark.db

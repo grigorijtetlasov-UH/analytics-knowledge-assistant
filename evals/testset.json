@@ -1,0 +1,156 @@
+{
+  "version": 1,
+  "description": "Retrieval test set. Each item is one intent asked in English and Ukrainian; a hit means ANY of expected_doc_ids appears in the top-k results. kind: name (metric named directly), alias (abbreviation or synonym), paraphrase (metric not named), availability (can it be calculated from the data).",
+  "items": [
+    {
+      "id": "q01",
+      "intent": "AOV definition",
+      "kind": "name",
+      "questions": {
+        "en": "What is average order value?",
+        "uk": "Що мається на увазі під середнім чеком?"
+      },
+      "expected_doc_ids": ["aov"]
+    },
+    {
+      "id": "q02",
+      "intent": "GMV vs realized revenue",
+      "kind": "name",
+      "questions": {
+        "en": "What's the difference between GMV and realized revenue?",
+        "uk": "Чим GMV відрізняється від фактичної виручки?"
+      },
+      "expected_doc_ids": ["gmv", "realized_revenue", "conventions"]
+    },
+    {
+      "id": "q03",
+      "intent": "cross-sell rate",
+      "kind": "paraphrase",
+      "questions": {
+        "en": "How often do customers buy products from different categories in one order?",
+        "uk": "Як часто клієнт докуповує щось з іншої категорії в тому ж замовленні?"
+      },
+      "expected_doc_ids": ["cross_sell_rate"]
+    },
+    {
+      "id": "q04",
+      "intent": "freight share",
+      "kind": "paraphrase",
+      "questions": {
+        "en": "What part of what customers pay goes to shipping?",
+        "uk": "Скільки з чеку клієнта йде на доставку?"
+      },
+      "expected_doc_ids": ["freight_share"]
+    },
+    {
+      "id": "q05",
+      "intent": "cancellation rate",
+      "kind": "paraphrase",
+      "questions": {
+        "en": "What share of orders gets called off?",
+        "uk": "Який відсоток замовлень у нас відміняють?"
+      },
+      "expected_doc_ids": ["cancellation_rate"]
+    },
+    {
+      "id": "q06",
+      "intent": "on-time delivery rate",
+      "kind": "alias",
+      "questions": {
+        "en": "How is OTD measured?",
+        "uk": "Як ми міряємо OTD?"
+      },
+      "expected_doc_ids": ["on_time_delivery_rate"]
+    },
+    {
+      "id": "q07",
+      "intent": "delivery time",
+      "kind": "paraphrase",
+      "questions": {
+        "en": "How long does it take for an order to reach the customer?",
+        "uk": "Скільки днів у середньому йде доставка до клієнта?"
+      },
+      "expected_doc_ids": ["delivery_time"]
+    },
+    {
+      "id": "q08",
+      "intent": "review score",
+      "kind": "alias",
+      "questions": {
+        "en": "How do we measure customer satisfaction?",
+        "uk": "Як зрозуміти, чи задоволені клієнти?"
+      },
+      "expected_doc_ids": ["review_score"]
+    },
+    {
+      "id": "q09",
+      "intent": "repeat purchase rate",
+      "kind": "paraphrase",
+      "questions": {
+        "en": "How do we count customers who come back and buy again?",
+        "uk": "Як порахувати, скільки клієнтів купують у нас повторно?"
+      },
+      "expected_doc_ids": ["repeat_purchase_rate"]
+    },
+    {
+      "id": "q10",
+      "intent": "CLV formula",
+      "kind": "alias",
+      "questions": {
+        "en": "How is LTV calculated?",
+        "uk": "Як рахувати LTV клієнта?"
+      },
+      "expected_doc_ids": ["clv"]
+    },
+    {
+      "id": "q11",
+      "intent": "unit economics",
+      "kind": "paraphrase",
+      "questions": {
+        "en": "Does an average order still make money after all costs?",
+        "uk": "Чи заробляємо ми на середньому замовленні після всіх витрат?"
+      },
+      "expected_doc_ids": ["unit_economics"]
+    },
+    {
+      "id": "q12",
+      "intent": "conversion rate availability",
+      "kind": "availability",
+      "questions": {
+        "en": "Can we calculate conversion rate from our data?",
+        "uk": "Чи можна з наших даних витягнути конверсію?"
+      },
+      "expected_doc_ids": ["conversion_rate"]
+    },
+    {
+      "id": "q13",
+      "intent": "CAC availability",
+      "kind": "availability",
+      "questions": {
+        "en": "Can we work out how much it costs to acquire a customer?",
+        "uk": "У скільки нам обходиться один новий клієнт, і чи можна це порахувати?"
+      },
+      "expected_doc_ids": ["cac"]
+    },
+    {
+      "id": "q14",
+      "intent": "ad-spend share vs ACoS",
+      "kind": "alias",
+      "questions": {
+        "en": "What is DRR and how is it different from ACoS?",
+        "uk": "Що таке ДРР і чим він відрізняється від ACoS?"
+      },
+      "expected_doc_ids": ["ad_spend_share", "acos"]
+    },
+    {
+      "id": "q15",
+      "intent": "valid order rule",
+      "kind": "paraphrase",
+      "questions": {
+        "en": "Which orders do we include when we report sales?",
+        "uk": "Які замовлення беремо в розрахунок продажів?"
+      },
+      "expected_doc_ids": ["conventions"]
+    }
+  ]
+}

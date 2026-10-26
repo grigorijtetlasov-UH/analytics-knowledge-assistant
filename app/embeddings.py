@@ -12,6 +12,12 @@ from openai import OpenAI
 BATCH_SIZE = 100
 
 
+def vector_literal(vector: list[float]) -> str:
+    """pgvector's text format, '[0.1,0.2,...]'. Sending vectors as text with a ::vector cast
+    avoids an extra dependency (pgvector-python + numpy) for a few hundred rows."""
+    return "[" + ",".join(repr(x) for x in vector) + "]"
+
+
 class Embedder(Protocol):
     # Stored with every chunk: vectors from different models must never be mixed.
     model: str

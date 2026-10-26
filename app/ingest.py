@@ -26,7 +26,7 @@ from psycopg.types.json import Jsonb
 from app.config import get_settings
 from app.db import connect
 from app.docs import DEFAULT_DOCS_DIR, Chunk, DocError, Document, chunk_document, load_documents
-from app.embeddings import Embedder, OpenAIEmbedder
+from app.embeddings import Embedder, OpenAIEmbedder, vector_literal
 
 
 @dataclass(frozen=True)
@@ -40,12 +40,6 @@ class IngestStats:
 
 def content_hash(text: str) -> str:
     return hashlib.sha256(text.encode("utf-8")).hexdigest()
-
-
-def vector_literal(vector: list[float]) -> str:
-    """pgvector's text format, '[0.1,0.2,...]'. Sending vectors as text with a ::vector cast
-    avoids an extra dependency (pgvector-python + numpy) for a few hundred rows."""
-    return "[" + ",".join(repr(x) for x in vector) + "]"
 
 
 def changed_documents(

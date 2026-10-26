@@ -220,3 +220,6 @@ __marimo__/
 .streamlit/secrets.toml
 
 data/olist/
+
+# Retrieval eval: cached query embeddings (re-created on demand)
+evals/.cache/
