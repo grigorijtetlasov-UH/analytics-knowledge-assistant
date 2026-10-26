@@ -50,7 +50,7 @@ docker-compose.yml, pyproject.toml, .env.example, README.md
 
 ## Milestones (do them in order, one PR/commit series each)
 1. Docker Compose with Postgres + pgvector; schema migrations; load Olist data.
-2. Write 10–15 metric docs; ingestion: chunking, embeddings, upsert (idempotent re-runs).
+2. Write 17 docs (16 metrics + conventions); ingestion: chunking, embeddings, upsert (idempotent re-runs).
 3. Retrieval: vector search, then hybrid (pgvector + Postgres full-text), return sources.
 4. `/ask` endpoint: retrieve → prompt with context → answer with cited sources.
 5. MCP server with the three tools; test it from Claude Desktop / Claude Code.
