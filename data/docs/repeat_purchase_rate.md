@@ -1,7 +1,7 @@
 ---
 id: repeat_purchase_rate
 name: Repeat purchase rate
-aliases: [repeat rate, returning customer rate, retention, repurchase rate]
+aliases: [repeat rate, returning customer rate, retention, repurchase rate, повторні покупки, "% повторних клієнтів", повторники]
 category: customers
 unit: "%"
 direction: higher_is_better

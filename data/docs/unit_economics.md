@@ -1,7 +1,7 @@
 ---
 id: unit_economics
 name: Unit economics per order
-aliases: [unit economics, contribution margin per order, order profitability, margin per order]
+aliases: [unit economics, contribution margin per order, order profitability, margin per order, юніт-економіка, юнитка, маржа з замовлення, прибуток на чек]
 category: finance
 unit: BRL
 direction: higher_is_better

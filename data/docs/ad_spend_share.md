@@ -1,7 +1,7 @@
 ---
 id: ad_spend_share
 name: Ad-spend share
-aliases: [advertising cost ratio, ad spend to revenue, marketing cost share, DRR, ДРР, TACoS]
+aliases: [advertising cost ratio, ad spend to revenue, marketing cost share, DRR, ДРР, TACoS, частка реклами у виручці, доля рекламы, "% на рекламу"]
 category: marketing
 unit: "%"
 direction: lower_is_better
@@ -31,3 +31,6 @@ Compare with contribution margin: if ad-spend share is higher, sales are unprofi
 
 ## Pitfalls
 - Using ad-attributed revenue in the denominator turns it into ACoS.
+- In everyday speech "ДРР" (DRR) is used both for this metric and for [acos](acos.md).
+  When a question says only "ДРР", clarify which denominator is meant (all revenue or
+  revenue attributed to ads) or explain both; do not assume one.

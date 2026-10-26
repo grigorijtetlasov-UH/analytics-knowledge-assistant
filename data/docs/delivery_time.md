@@ -1,7 +1,7 @@
 ---
 id: delivery_time
 name: Average delivery time
-aliases: [delivery time, lead time, days to deliver, shipping time]
+aliases: [delivery time, lead time, days to deliver, shipping time, термін доставки, срок доставки, скільки днів їде]
 category: operations
 unit: days
 direction: lower_is_better

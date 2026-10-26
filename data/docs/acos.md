@@ -1,7 +1,7 @@
 ---
 id: acos
 name: Advertising Cost of Sales
-aliases: [ACoS, advertising cost of sale, ROAS, return on ad spend]
+aliases: [ACoS, advertising cost of sale, ROAS, return on ad spend, ДРР по рекламі, окупність реклами, ROAS навпаки]
 category: marketing
 unit: "%"
 direction: lower_is_better
@@ -31,3 +31,7 @@ Compare ACoS with gross margin %: ACoS above margin means the ads lose money.
 
 ## Pitfalls
 - Attribution windows differ between ad platforms; ACoS from two platforms is not comparable.
+- In everyday speech "ДРР" (DRR) is used both for this metric and for
+  [ad_spend_share](ad_spend_share.md). When a question says only "ДРР", clarify which
+  denominator is meant (revenue attributed to ads or all revenue) or explain both; do not
+  assume one.

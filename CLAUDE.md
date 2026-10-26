@@ -53,6 +53,8 @@ docker-compose.yml, pyproject.toml, .env.example, README.md
 2. Write 17 docs (16 metrics + conventions); ingestion: chunking, embeddings, upsert (idempotent re-runs).
 3. Retrieval: vector search, then hybrid (pgvector + Postgres full-text), return sources.
 4. `/ask` endpoint: retrieve → prompt with context → answer with cited sources.
+   If a question is ambiguous between metrics (e.g. «ДРР» can mean ad_spend_share or acos),
+   the assistant must ask a clarifying question or explain both, never guess. Add an eval case.
 5. MCP server with the three tools; test it from Claude Desktop / Claude Code.
 6. Evals: 30+ questions with expected sources/answers; report hit@k, MRR, answer accuracy.
    Run in GitHub Actions on every PR.

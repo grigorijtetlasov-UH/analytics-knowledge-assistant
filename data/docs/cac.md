@@ -1,7 +1,7 @@
 ---
 id: cac
 name: Customer Acquisition Cost
-aliases: [CAC, acquisition cost, cost per new customer]
+aliases: [CAC, acquisition cost, cost per new customer, вартість залучення клієнта, ціна клієнта, сколько стоит новый клиент]
 category: marketing
 unit: BRL
 direction: lower_is_better

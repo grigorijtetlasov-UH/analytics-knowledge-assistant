@@ -1,7 +1,7 @@
 ---
 id: aov
 name: Average Order Value
-aliases: [AOV, average check, average basket value, average order size]
+aliases: [AOV, average check, average basket value, average order size, середній чек, середній чек замовлення, ср. чек]
 category: sales
 unit: BRL
 direction: higher_is_better

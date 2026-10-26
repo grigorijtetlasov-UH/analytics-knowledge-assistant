@@ -1,7 +1,7 @@
 ---
 id: gmv
 name: Gross Merchandise Value
-aliases: [GMV, gross sales, merchandise value, sales volume]
+aliases: [GMV, gross sales, merchandise value, sales volume, оборот, сума замовлень, скільки назамовляли]
 category: sales
 unit: BRL
 direction: higher_is_better

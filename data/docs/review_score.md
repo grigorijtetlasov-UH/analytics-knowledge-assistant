@@ -1,7 +1,7 @@
 ---
 id: review_score
 name: Average review score
-aliases: [review score, rating, CSAT, customer satisfaction, negative review rate]
+aliases: [review score, rating, CSAT, customer satisfaction, negative review rate, рейтинг, середня оцінка, відгуки, "% негативу", оценки клиентов]
 category: quality
 unit: score
 direction: higher_is_better

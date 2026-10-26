@@ -1,7 +1,7 @@
 ---
 id: on_time_delivery_rate
 name: On-time delivery rate
-aliases: [OTD, on-time delivery, delivered on time, late delivery rate]
+aliases: [OTD, on-time delivery, delivered on time, late delivery rate, вчасна доставка, "% доставок у строк", доставили вовремя]
 category: operations
 unit: "%"
 direction: higher_is_better

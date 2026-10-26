@@ -1,7 +1,7 @@
 ---
 id: conversion_rate
 name: Conversion rate
-aliases: [CR, conversion, session conversion, visitor to order rate]
+aliases: [CR, conversion, session conversion, visitor to order rate, конверсія, конверсия сайта, "% з сесій у замовлення"]
 category: marketing
 unit: "%"
 direction: higher_is_better

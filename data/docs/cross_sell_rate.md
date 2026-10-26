@@ -1,7 +1,7 @@
 ---
 id: cross_sell_rate
 name: Cross-sell rate
-aliases: [cross-sell, cross selling rate, multi-category order share, basket diversity]
+aliases: [cross-sell, cross selling rate, multi-category order share, basket diversity, крос-сел, частка комплексних замовлень, допродажі, кросс-продажи]
 category: sales
 unit: "%"
 direction: higher_is_better

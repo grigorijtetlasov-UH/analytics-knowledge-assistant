@@ -1,7 +1,7 @@
 ---
 id: realized_revenue
 name: Realized revenue
-aliases: [delivered revenue, actual revenue, net sales delivered]
+aliases: [delivered revenue, actual revenue, net sales delivered, реалізація, виручка по доставлених, фактична виручка, выкупленные, сума викупу]
 category: sales
 unit: BRL
 direction: higher_is_better

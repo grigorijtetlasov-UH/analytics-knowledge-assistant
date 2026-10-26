@@ -1,7 +1,7 @@
 ---
 id: clv
 name: Customer Lifetime Value
-aliases: [CLV, LTV, lifetime value, customer value]
+aliases: [CLV, LTV, lifetime value, customer value, цінність клієнта, сколько приносит клиент]
 category: customers
 unit: BRL
 direction: higher_is_better

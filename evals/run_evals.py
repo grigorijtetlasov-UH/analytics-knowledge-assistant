@@ -182,6 +182,9 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--label", required=True, help="report name, e.g. baseline")
     parser.add_argument("--modes", nargs="+", choices=list(MODES), default=list(MODES))
+    parser.add_argument(
+        "--note", default="", help="caveats written at the top of the report (markdown)"
+    )
     args = parser.parse_args()
 
     settings = get_settings()
@@ -198,8 +201,9 @@ def main() -> int:
         outcomes = run(conn, cases, embedder, args.modes)
 
     table = summary_table(outcomes, args.modes)
+    note = f"> **Note.** {args.note}\n\n" if args.note else ""
     report = (
-        f"# Retrieval eval: {args.label}\n\n"
+        f"# Retrieval eval: {args.label}\n\n{note}"
         f"{len(cases)} questions ({len(cases) // 2} intents x en/uk), top {K} chunks, "
         f"embeddings: {embedder.model}.\n\n## Summary\n\n{table}\n\n"
         f"## Misses (no expected document at rank 1)\n\n{misses_section(outcomes)}\n"

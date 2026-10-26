@@ -1,7 +1,7 @@
 ---
 id: freight_share
 name: Freight share
-aliases: [delivery cost share, shipping share, freight ratio, freight to order value]
+aliases: [delivery cost share, shipping share, freight ratio, freight to order value, частка доставки, доля доставки в чеке, delivery share, скільки з'їдає доставка]
 category: operations
 unit: "%"
 direction: lower_is_better

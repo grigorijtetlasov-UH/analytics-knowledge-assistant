@@ -1,7 +1,7 @@
 ---
 id: conventions
 name: Conventions and business rules
-aliases: [business rules, definitions, valid order, data conventions, glossary]
+aliases: [business rules, definitions, valid order, data conventions, glossary, правила підрахунку, методологія, що вважаємо замовленням, договорённости по данным]
 category: reference
 data_availability: full
 related: [gmv, realized_revenue, aov, cancellation_rate]

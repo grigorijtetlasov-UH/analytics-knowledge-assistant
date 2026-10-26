@@ -1,7 +1,7 @@
 ---
 id: cancellation_rate
 name: Cancellation rate
-aliases: [cancel rate, order cancellation rate, canceled orders share]
+aliases: [cancel rate, order cancellation rate, canceled orders share, "% скасувань", відміни, процент отмен]
 category: operations
 unit: "%"
 direction: lower_is_better
