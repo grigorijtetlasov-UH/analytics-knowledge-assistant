@@ -1,0 +1,5 @@
+# Store text files with LF in the repo and check them out with LF on every OS,
+# so Linux CI, the VPS and Windows checkouts see identical bytes.
+* text=auto eol=lf
+# PowerShell scripts keep CRLF: Windows PowerShell 5.1 tools expect it.
+*.ps1 text eol=crlf
