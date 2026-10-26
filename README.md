@@ -4,7 +4,36 @@ A RAG assistant that answers business questions about e-commerce metrics and dat
 exposed as a REST API and as an MCP server, with an evaluation suite.
 
 > Work in progress. Done: database, migrations and Olist data (milestone 1); metric
-> documents and their ingestion into pgvector (milestone 2).
+> documents and their ingestion into pgvector (milestone 2); retrieval with measured
+> vector vs hybrid search (milestone 3).
+
+## Retrieval results
+
+15 questions about metrics, each asked in English and Ukrainian ([test set](evals/testset.json));
+the metric documents are in English. A question is a hit@k when a chunk of the expected
+document is among the top k results. MRR@5 = mean of 1 / rank of the first hit.
+
+| search | aliases | EN hit@1 | EN MRR@5 | UK hit@1 | UK hit@3 | UK MRR@5 |
+|---|---|---:|---:|---:|---:|---:|
+| vector | English only | **1.00** | **1.00** | 0.67 | 0.80 | 0.72 |
+| hybrid (vector + full-text, RRF) | English only | 0.73 | 0.84 | 0.67 | 0.80 | 0.72 |
+| **vector (default)** | **+ Ukrainian** | **1.00** | **1.00** | 0.67 | **0.93** | **0.79** |
+| hybrid | + Ukrainian | 0.80 | 0.87 | 0.53 | 0.73 | 0.60 |
+
+- **Vector search is the default.** It finds the right metric first for every English question.
+- **Hybrid search did not pay off.** Common domain words ("order", "customer") match 73–80
+  of 86 chunks, so the full-text ranking is noise that rank fusion weighs equally with vector
+  ranks. RRF and other parameters were deliberately not tuned on a 30-question set.
+- **Ukrainian questions are the weak spot** (English-only documents). Ukrainian aliases lift
+  the right document into the top 3 more often (hit@3 0.80 → 0.93) but not to rank 1.
+- **The alias gain is probably inflated:** aliases and questions were written by the same
+  person, and 14 of 15 Ukrainian questions share a word with an alias. To be re-checked on
+  independently written questions (milestone 6).
+
+Full reports with every miss: [vector baseline](evals/results/retrieval_baseline.md) ·
+[hybrid](evals/results/retrieval_hybrid.md) ·
+[Ukrainian aliases](evals/results/retrieval_uk_aliases.md).
+Reproduce: `uv run python -m evals.run_evals --label <name>`.
 
 ## Setup
 
@@ -79,8 +108,10 @@ skipped when Postgres is not running.
 ## Project layout
 
 ```
-app/          config.py, db.py, migrate.py, load_olist.py, docs.py, embeddings.py, ingest.py
+app/          config.py, db.py, migrate.py, load_olist.py, docs.py, embeddings.py, ingest.py,
+              retrieval.py
 migrations/   numbered plain-SQL migrations, applied in order
+evals/        test set, eval runner, reports (results/)
 tests/        unit + integration tests, synthetic Olist fixtures
 data/docs/    metric definition documents (indexed for RAG)
 data/olist/   Olist CSVs (not committed)
