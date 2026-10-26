@@ -1,0 +1,5 @@
+review_id,order_id,review_score,review_comment_title,review_comment_message,review_creation_date,review_answer_timestamp
+r1,o1,4,,"Não testei o produto ainda, mas ele veio correto.
+Recomendo!",2017-10-11 00:00:00,2017-10-12 03:43:48
+r2,o2,1,"",,2018-08-24 00:00:00,2018-08-25 10:00:00
+r2,o3,1,Péssimo,,2018-02-27 00:00:00,2018-02-28 12:00:00
