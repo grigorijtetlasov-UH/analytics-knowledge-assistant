@@ -22,6 +22,13 @@ class Settings(BaseSettings):
     postgres_host: str = "127.0.0.1"
     postgres_port: int = 5432
 
+    # Optional so that commands and tests that never call OpenAI work without a key;
+    # app/ingest.py checks for it before embedding.
+    openai_api_key: SecretStr | None = None
+    embedding_model: str = "text-embedding-3-small"
+    # Must match the vector(...) size of rag.chunks.embedding (migrations/003_rag_schema.sql).
+    embedding_dimensions: int = 1536
+
     @property
     def database_url(self) -> str:
         """libpq connection URL. User and password are percent-encoded so characters

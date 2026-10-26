@@ -3,7 +3,8 @@
 A RAG assistant that answers business questions about e-commerce metrics and data,
 exposed as a REST API and as an MCP server, with an evaluation suite.
 
-> Work in progress. Milestone 1 (database, migrations, Olist data) is done.
+> Work in progress. Done: database, migrations and Olist data (milestone 1); metric
+> documents and their ingestion into pgvector (milestone 2).
 
 ## Setup
 
@@ -48,6 +49,23 @@ uv installs the pinned Python version (3.11) by itself.
 
 The tables live in the `olist` schema (`olist.orders`, `olist.order_items`, ...).
 
+7. **Index the metric documents.** Needs `OPENAI_API_KEY` in `.env`. Embeds every
+   `## ` section of `data/docs/*.md` and stores it in `rag.chunks`. Re-runs are incremental:
+   unchanged documents are skipped and only edited sections are sent to the API.
+   ```bash
+   uv run python -m app.ingest --dry-run   # what would change, no API calls
+   uv run python -m app.ingest
+   ```
+
+## Metric documents
+
+`data/docs/*.md` define the business metrics the assistant answers about. Each file has
+YAML frontmatter (`id`, `name`, `aliases`, `category`, `unit`, `direction`,
+`data_availability`, `related`) and fixed `## ` sections (Definition, Formula,
+Calculation on Olist data, Interpretation, Pitfalls). `conventions.md` holds the shared
+rules (valid order, GMV vs realized revenue, customer identity). `uv run pytest` checks that
+every document parses, links resolve and every SQL example runs.
+
 ## Development
 
 ```bash
@@ -61,8 +79,9 @@ skipped when Postgres is not running.
 ## Project layout
 
 ```
-app/          config.py, db.py, migrate.py, load_olist.py
+app/          config.py, db.py, migrate.py, load_olist.py, docs.py, embeddings.py, ingest.py
 migrations/   numbered plain-SQL migrations, applied in order
 tests/        unit + integration tests, synthetic Olist fixtures
+data/docs/    metric definition documents (indexed for RAG)
 data/olist/   Olist CSVs (not committed)
 ```
