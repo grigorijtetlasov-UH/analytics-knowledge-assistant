@@ -44,6 +44,7 @@ app/        api.py, retrieval.py, llm.py, ingest.py, db.py, config.py
 mcp_server/ server.py
 evals/      testset.json, run_evals.py, test_retrieval.py
 data/docs/  metric definition markdown files
+migrations/ numbered plain-SQL files (NNN_name.sql), applied in order by app/migrate.py
 docker-compose.yml, pyproject.toml, .env.example, README.md
 ```
 

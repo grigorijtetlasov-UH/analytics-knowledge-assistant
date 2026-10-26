@@ -1,0 +1,39 @@
+[project]
+name = "analytics-knowledge-assistant"
+version = "0.1.0"
+description = "RAG assistant for e-commerce metrics, exposed as a REST API and an MCP server, with evals."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    # psycopg 3: modern Postgres driver with first-class COPY support (used by the Olist loader).
+    # [binary] bundles libpq, so nothing extra has to be installed on Windows or in CI.
+    "psycopg[binary]>=3.2",
+    "pydantic-settings>=2.4",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.3",
+    "ruff>=0.7",
+]
+
+[tool.uv]
+# This is an application, not a library: no wheel is built; code runs from the repo root
+# (e.g. `uv run python -m app.migrate`).
+package = false
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+# E/F: pycodestyle + pyflakes, I: import sorting, UP: modern syntax, B: common bugs.
+select = ["E", "F", "I", "UP", "B"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+# Make `import app` work in tests without installing the project as a package.
+pythonpath = ["."]
+markers = [
+    "db: needs a running Postgres (skipped automatically if unreachable)",
+]

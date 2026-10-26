@@ -1,0 +1,30 @@
+services:
+  db:
+    # Official Postgres 16 image with the pgvector extension pre-built.
+    # Pinned to an exact tag so every machine (and CI) runs the same versions.
+    image: pgvector/pgvector:0.8.1-pg16
+    environment:
+      # `:?` makes `docker compose up` fail fast with a clear error if a variable
+      # is missing from .env, instead of starting a database with an empty password.
+      POSTGRES_USER: ${POSTGRES_USER:?set POSTGRES_USER in .env}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+      POSTGRES_DB: ${POSTGRES_DB:?set POSTGRES_DB in .env}
+    ports:
+      # Bind to localhost only: the database is reachable from this machine
+      # but not from the local network. Host port is configurable in case
+      # another Postgres already uses 5432.
+      - "127.0.0.1:${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      # Named volume: data survives `docker compose down` (but not `down -v`).
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      # `$$` escapes `$` so the variables are expanded inside the container,
+      # not by Compose on the host.
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    restart: unless-stopped
+
+volumes:
+  pgdata:
