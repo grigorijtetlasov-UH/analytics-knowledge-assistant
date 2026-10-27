@@ -43,12 +43,30 @@ class Settings(BaseSettings):
     # must be re-checked on independently written questions in milestone 6.
     off_topic_min_similarity: float = 0.22
 
+    # Read-only role for the SQL tool, created by migrations/005_readonly_role.sql (the name
+    # is fixed there). Without a password the role cannot log in and the tool is disabled.
+    readonly_db_user: str = "olist_reader"
+    readonly_db_password: SecretStr | None = None
+    # Limits of run_readonly_sql: rows returned to the model and time per query.
+    sql_max_rows: int = 100
+    sql_timeout_ms: int = 5000
+
+    @property
+    def readonly_database_url(self) -> str:
+        """Like database_url, but logging in as the read-only role."""
+        if self.readonly_db_password is None:
+            raise ValueError("READONLY_DB_PASSWORD is not set")
+        return self._url(self.readonly_db_user, self.readonly_db_password)
+
     @property
     def database_url(self) -> str:
+        return self._url(self.postgres_user, self.postgres_password)
+
+    def _url(self, user_name: str, secret: SecretStr) -> str:
         """libpq connection URL. User and password are percent-encoded so characters
         like '@', ':' or '/' in a generated password cannot break the URL."""
-        user = quote(self.postgres_user, safe="")
-        password = quote(self.postgres_password.get_secret_value(), safe="")
+        user = quote(user_name, safe="")
+        password = quote(secret.get_secret_value(), safe="")
         return (
             f"postgresql://{user}:{password}"
             f"@{self.postgres_host}:{self.postgres_port}/{self.postgres_db}"

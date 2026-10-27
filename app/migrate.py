@@ -20,7 +20,9 @@ from dataclasses import dataclass
 from pathlib import Path
 
 import psycopg
+from psycopg import sql
 
+from app.config import get_settings
 from app.db import connect
 
 MIGRATIONS_DIR = Path(__file__).resolve().parent.parent / "migrations"
@@ -122,10 +124,27 @@ def migrate(conn: psycopg.Connection, directory: Path = MIGRATIONS_DIR) -> list[
         conn.execute("SELECT pg_advisory_unlock(%s)", (ADVISORY_LOCK_KEY,))
 
 
+def set_readonly_password(conn: psycopg.Connection, role: str, password: str) -> None:
+    """Enable login for the read-only role (created NOLOGIN by 005_readonly_role.sql).
+
+    The password lives only in .env, never in a migration file (the repository is public).
+    ALTER ROLE does not accept bind parameters, so the value is sent as an escaped literal
+    (sql.Literal); Postgres stores it as a SCRAM hash, not in plain text."""
+    conn.execute(
+        sql.SQL("ALTER ROLE {} LOGIN PASSWORD {}").format(
+            sql.Identifier(role), sql.Literal(password)
+        )
+    )
+
+
 def main() -> int:
+    settings = get_settings()
     try:
         with connect(autocommit=True) as conn:
             applied = migrate(conn)
+            if settings.readonly_db_password is not None:
+                password = settings.readonly_db_password.get_secret_value()
+                set_readonly_password(conn, settings.readonly_db_user, password)
     except MigrationError as exc:
         print(f"migration error: {exc}", file=sys.stderr)
         return 1
@@ -133,6 +152,10 @@ def main() -> int:
         print(f"applied {migration.name}")
     if not applied:
         print("database is up to date")
+    if settings.readonly_db_password is None:
+        print("READONLY_DB_PASSWORD is not set: the read-only SQL tool stays disabled")
+    else:
+        print(f"login enabled for read-only role {settings.readonly_db_user}")
     return 0
 
 
