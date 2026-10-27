@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "description": "Questions the assistant must not answer from the metric docs. Used to calibrate OFF_TOPIC_MIN_SIMILARITY (evals/calibrate_off_topic.py) and, from milestone 4 on, as answer eval cases. kind: far (nothing to do with e-commerce analytics; the similarity threshold should catch these without an LLM call), near (business/finance terms we have no document for; they may pass the threshold, then the model must answer off_topic).",
+  "items": [
+    {"id": "o01", "kind": "far", "lang": "en", "question": "What's the weather like in Kyiv tomorrow?"},
+    {"id": "o02", "kind": "far", "lang": "uk", "question": "Як приготувати борщ?"},
+    {"id": "o03", "kind": "far", "lang": "en", "question": "Who won the 2018 football World Cup?"},
+    {"id": "o04", "kind": "far", "lang": "uk", "question": "Напиши вірш про осінь"},
+    {"id": "o05", "kind": "far", "lang": "en", "question": "How do I reverse a list in Python?"},
+    {"id": "o06", "kind": "far", "lang": "uk", "question": "Яка столиця Австралії?"},
+    {"id": "o07", "kind": "far", "lang": "en", "question": "Recommend a good science fiction book"},
+    {"id": "o08", "kind": "far", "lang": "uk", "question": "Як вивчити англійську за місяць?"},
+    {"id": "o09", "kind": "near", "lang": "en", "question": "What is EBITDA and how is it calculated?"},
+    {"id": "o10", "kind": "near", "lang": "uk", "question": "Що таке NPS і як його рахувати?"},
+    {"id": "o11", "kind": "near", "lang": "en", "question": "What is the current inflation rate in Brazil?"},
+    {"id": "o12", "kind": "near", "lang": "uk", "question": "Як рахувати плинність персоналу?"}
+  ]
+}

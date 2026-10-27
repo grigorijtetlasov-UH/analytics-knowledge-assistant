@@ -58,6 +58,10 @@ docker-compose.yml, pyproject.toml, .env.example, README.md
 5. MCP server with the three tools; test it from Claude Desktop / Claude Code.
 6. Evals: 30+ questions with expected sources/answers; report hit@k, MRR, answer accuracy.
    Run in GitHub Actions on every PR.
+   Re-check `OFF_TOPIC_MIN_SIMILARITY` (0.22, set in milestone 4) on the new, independently
+   written questions: rerun `evals/calibrate_off_topic.py` with them. It was calibrated on
+   questions written by the same person as the docs (lowest on-topic score 0.270, highest
+   unrelated 0.249), so real questions may score lower and be wrongly rejected.
 7. Langfuse tracing, structured logs, deploy to VPS with Docker; README with diagram,
    eval results table and a short demo GIF.
 

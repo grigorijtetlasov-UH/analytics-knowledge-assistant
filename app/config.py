@@ -1,6 +1,7 @@
 """Application settings, loaded from environment variables and the .env file."""
 
 from functools import lru_cache
+from typing import Literal
 from urllib.parse import quote
 
 from pydantic import SecretStr
@@ -28,6 +29,17 @@ class Settings(BaseSettings):
     embedding_model: str = "text-embedding-3-small"
     # Must match the vector(...) size of rag.chunks.embedding (migrations/003_rag_schema.sql).
     embedding_dimensions: int = 1536
+
+    # Optional for the same reason as the OpenAI key; app/llm.py fails clearly without it.
+    anthropic_api_key: SecretStr | None = None
+    # Opus until evals compare the three models on our questions (milestone 4, commit 3).
+    llm_model: str = "claude-opus-5-5"
+    # Short answers grounded in 5 chunks need little reasoning; "low" is checked on evals.
+    llm_effort: Literal["low", "medium", "high", "xhigh", "max"] = "low"
+    # Best-chunk cosine similarity below this means "off topic": answered without an LLM
+    # call. Calibrated by evals/calibrate_off_topic.py (evals/results/off_topic_threshold.md);
+    # must be re-checked on independently written questions in milestone 6.
+    off_topic_min_similarity: float = 0.22
 
     @property
     def database_url(self) -> str:
