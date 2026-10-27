@@ -5,7 +5,7 @@ exposed as a REST API and as an MCP server, with an evaluation suite.
 
 > Work in progress. Done: database, migrations and Olist data (milestone 1); metric
 > documents and their ingestion into pgvector (milestone 2); retrieval with measured
-> vector vs hybrid search (milestone 3).
+> vector vs hybrid search (milestone 3). In progress: the `/ask` endpoint (milestone 4).
 
 ## Retrieval results
 
@@ -86,6 +86,40 @@ The tables live in the `olist` schema (`olist.orders`, `olist.order_items`, ...)
    uv run python -m app.ingest
    ```
 
+## Ask a question
+
+Start the API (needs `OPENAI_API_KEY` and `ANTHROPIC_API_KEY` in `.env`, and the index from
+step 7). Interactive docs: http://127.0.0.1:8000/docs.
+
+```bash
+uv run python -m uvicorn app.api:app --reload
+curl -s -X POST http://127.0.0.1:8000/ask   -H "Content-Type: application/json"   -d '{"question": "How is average order value calculated?"}'
+```
+
+The response has the same shape for every question:
+
+| field | meaning |
+|---|---|
+| `status` | `answered`; `ambiguous` (the term fits several metrics, e.g. «ДРР»: both are explained and `clarifying_question` asks which one); `no_data` (defined, but not computable from Olist); `off_topic` |
+| `answer` | the answer, in the language of the question, with `[S1]`-style source markers |
+| `sources` | the cited document sections: `doc_id`, `name`, `section` |
+| `model`, `usage` | the model that answered, tokens and `cost_usd`; `null` when no LLM was called |
+
+Every answer except `off_topic` cites at least one source, and every cited source is one
+the model was actually given; an answer that breaks this is returned as HTTP 502, not shown.
+Questions far from any document (best chunk similarity below `OFF_TOPIC_MIN_SIMILARITY`)
+are answered without calling the LLM:
+
+```json
+{"status": "off_topic",
+ "answer": "This question is not covered by the metric documentation, so I cannot answer it.",
+ "clarifying_question": null, "sources": [], "model": null, "usage": null}
+```
+
+`GET /health` checks the database and returns the number of indexed chunks; it never calls
+the paid APIs. Errors: 422 invalid request, 502 unusable upstream answer, 503 a dependency
+is down or not configured.
+
 ## Metric documents
 
 `data/docs/*.md` define the business metrics the assistant answers about. Each file has
@@ -109,7 +143,7 @@ skipped when Postgres is not running.
 
 ```
 app/          config.py, db.py, migrate.py, load_olist.py, docs.py, embeddings.py, ingest.py,
-              retrieval.py
+              retrieval.py, llm.py (Claude client), answer.py (RAG pipeline), api.py (FastAPI)
 migrations/   numbered plain-SQL migrations, applied in order
 evals/        test set, eval runner, reports (results/)
 tests/        unit + integration tests, synthetic Olist fixtures
