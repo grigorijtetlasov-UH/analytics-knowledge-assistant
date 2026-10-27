@@ -62,6 +62,10 @@ docker-compose.yml, pyproject.toml, .env.example, README.md
    written questions: rerun `evals/calibrate_off_topic.py` with them. It was calibrated on
    questions written by the same person as the docs (lowest on-topic score 0.270, highest
    unrelated 0.249), so real questions may score lower and be wrongly rejected.
+   For ambiguous questions (several expected documents, e.g. «ДРР» → ad_spend_share and
+   acos) add a retrieval metric "all expected documents in the top 5". The current hit rule
+   counts ANY expected document, so it could not see the effect of adding the DRR alias to
+   acos in milestone 5 (numbers identical before and after).
 7. Langfuse tracing, structured logs, deploy to VPS with Docker; README with diagram,
    eval results table and a short demo GIF.
 

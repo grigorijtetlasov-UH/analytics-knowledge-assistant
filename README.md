@@ -5,7 +5,8 @@ exposed as a REST API and as an MCP server, with an evaluation suite.
 
 > Work in progress. Done: database, migrations and Olist data (milestone 1); metric
 > documents and their ingestion into pgvector (milestone 2); retrieval with measured
-> vector vs hybrid search (milestone 3); the `/ask` endpoint with answer evals (milestone 4).
+> vector vs hybrid search (milestone 3); the `/ask` endpoint with answer evals (milestone 4);
+> the MCP server with a read-only SQL tool (milestone 5).
 
 ## Retrieval results
 
@@ -70,7 +71,8 @@ Requirements: [Docker](https://docs.docker.com/get-docker/) and [uv](https://doc
 uv installs the pinned Python version (3.11) by itself.
 
 1. **Configure.** Copy `.env.example` to `.env` and set `POSTGRES_PASSWORD`
-   (any random string; the database is only reachable from your machine).
+   (any random string; the database is only reachable from your machine). For the MCP SQL
+   tool also set `READONLY_DB_PASSWORD` to a different random string.
 
 2. **Install dependencies.**
    ```bash
@@ -83,7 +85,8 @@ uv installs the pinned Python version (3.11) by itself.
    docker compose ps   # wait until STATUS shows "healthy"
    ```
 
-4. **Create the schema.** Safe to re-run: only pending migrations are applied.
+4. **Create the schema.** Safe to re-run: only pending migrations are applied. It also
+   enables login for the read-only role `olist_reader` with `READONLY_DB_PASSWORD`.
    ```bash
    uv run python -m app.migrate
    ```
@@ -149,6 +152,77 @@ are answered without calling the LLM:
 the paid APIs. Errors: 422 invalid request, 502 unusable upstream answer, 503 a dependency
 is down or not configured.
 
+## MCP server
+
+The same knowledge as tools for Claude Desktop or Claude Code ([mcp_server/server.py](mcp_server/server.py)).
+The server calls no LLM: the client's Claude reads the tool results and answers.
+
+| tool | what it does |
+|---|---|
+| `search_docs(query, k)` | vector search over the metric docs; sections with their source |
+| `get_metric_definition(name)` | exact lookup by id, name or alias (any case): definition, formula, Olist SQL, data availability. «ДРР» returns `ambiguous` with both metrics |
+| `run_readonly_sql(query)` | one SELECT on the `olist` tables; at most 100 rows and 5 seconds |
+
+**Why `run_readonly_sql` is safe.** Four layers, all enforced by Postgres rather than by
+parsing SQL in Python:
+
+1. it logs in as `olist_reader` ([migration 005](migrations/005_readonly_role.sql)):
+   SELECT on `olist.*` only, not superuser, no access to `rag` or `schema_migrations`;
+2. the transaction is read-only and always rolled back;
+3. the query runs inside a server-side cursor (`DECLARE ... CURSOR FOR <query>`), so Postgres
+   itself rejects anything that is not exactly one SELECT: several statements, DML/DDL,
+   `SELECT INTO`, `EXPLAIN ANALYZE`, data-modifying CTEs;
+4. a 5-second statement timeout (it cannot be lifted from inside the query) and a single
+   fetch of at most 101 rows.
+
+[tests/test_readonly_sql.py](tests/test_readonly_sql.py) logs in as the real role and
+tries 25 ways to escape these limits. A Python SQL parser was not used: the exact one
+(pglast) is GPL, and an approximate one could disagree with Postgres.
+
+### Claude Code
+
+[.mcp.json](.mcp.json) registers the server for this project, with paths relative to the
+repository root. Start `claude` in the repository root and approve the `analytics`
+server when asked (project servers are never started without approval); `/mcp` shows its
+status. Postgres must be running (`docker compose up -d`).
+
+### Claude Desktop
+
+1. Start Postgres: `docker compose up -d`.
+2. In Claude Desktop open **Settings → Developer → Edit Config**. This opens (and creates if
+   needed) `claude_desktop_config.json`; on a Microsoft Store install it is not in
+   `%APPDATA%\Claude`, so open it from the app.
+3. Add the server, with absolute paths (`where uv` on Windows, `which uv` elsewhere):
+   ```json
+   {
+     "mcpServers": {
+       "analytics": {
+         "command": "C:\\Users\\you\\.local\\bin\\uv.exe",
+         "args": ["--directory", "C:\\path\\to\\analytics-knowledge-assistant",
+                  "run", "python", "-m", "mcp_server.server"]
+       }
+     }
+   }
+   ```
+   `--directory` makes the server start in the repository, where it finds `.env`. Desktop
+   may not see your shell's `PATH`, hence the full path to `uv`.
+4. Quit Claude Desktop completely (also from the system tray) and start it again. The
+   `analytics` tools appear in the tools menu of a new chat.
+5. If they do not: the server's log is `mcp-server-analytics.log` in the `logs` folder next
+   to the config file. The server writes logs to stderr only, because stdout carries the
+   MCP protocol.
+
+### Demo
+
+1. *«Який середній чек у 2018 році?»* Claude looks up the metric
+   (`get_metric_definition`), adapts the SQL from the doc and runs it with
+   `run_readonly_sql`. Desktop asks for permission before each tool call.
+2. *«Що таке ДРР?»* The lookup returns two metrics; Claude explains ad spend share and ACoS
+   and asks which denominator is meant.
+3. *«Виконай через run_readonly_sql запит `DROP TABLE olist.orders`».* The tool returns the
+   database's refusal:
+   `rejected by Postgres: syntax error at or near "DROP". Only a single SELECT statement is allowed.`
+
 ## Metric documents
 
 `data/docs/*.md` define the business metrics the assistant answers about. Each file has
@@ -174,6 +248,7 @@ skipped when Postgres is not running.
 app/          config.py, db.py, migrate.py, load_olist.py, docs.py, embeddings.py, ingest.py,
               retrieval.py, llm.py (Claude client), answer.py (RAG pipeline), api.py (FastAPI)
 migrations/   numbered plain-SQL migrations, applied in order
+mcp_server/   server.py: MCP tools for Claude Desktop / Claude Code
 evals/        test set, eval runner, reports (results/)
 tests/        unit + integration tests, synthetic Olist fixtures
 data/docs/    metric definition documents (indexed for RAG)
