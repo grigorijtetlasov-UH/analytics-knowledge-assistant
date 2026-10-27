@@ -32,8 +32,10 @@ class Settings(BaseSettings):
 
     # Optional for the same reason as the OpenAI key; app/llm.py fails clearly without it.
     anthropic_api_key: SecretStr | None = None
-    # Opus until evals compare the three models on our questions (milestone 4, commit 3).
-    llm_model: str = "claude-opus-5-5"
+    # The cheapest model that passed every answer eval, 3 runs each (README, "Answer
+    # results"): Sonnet 36/36 at half of Opus's cost. Haiku failed 4/36 (answers in Russian
+    # to English questions, SQL left out).
+    llm_model: str = "claude-sonnet-5-5"
     # Short answers grounded in 5 chunks need little reasoning; "low" is checked on evals.
     llm_effort: Literal["low", "medium", "high", "xhigh", "max"] = "low"
     # Best-chunk cosine similarity below this means "off topic": answered without an LLM

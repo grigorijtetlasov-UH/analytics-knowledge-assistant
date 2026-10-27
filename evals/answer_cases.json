@@ -1,0 +1,69 @@
+{
+  "version": 1,
+  "description": "Answer evals for /ask. Checks are formal (no LLM judge yet; that comes in milestone 6): expected_status must match; every doc in must_cite must be among the cited sources; for ambiguous, a clarifying question must be present; answer_contains lists substrings the answer must contain (case-insensitive); a Ukrainian question must get an answer in Ukrainian (Cyrillic). Off-topic ids o01/o09/o10 reuse questions from evals/off_topic.json.",
+  "items": [
+    {
+      "id": "a01", "kind": "answered", "lang": "en",
+      "question": "What is average order value and how is it calculated?",
+      "expected_status": "answered", "must_cite": ["aov"]
+    },
+    {
+      "id": "a02", "kind": "answered", "lang": "uk",
+      "question": "Як рахується частка замовлень, доставлених вчасно?",
+      "expected_status": "answered", "must_cite": ["on_time_delivery_rate"]
+    },
+    {
+      "id": "a03", "kind": "answered_definition_without_data", "lang": "en",
+      "question": "How is CAC defined?",
+      "expected_status": "answered", "must_cite": ["cac"],
+      "note": "CAC cannot be calculated from Olist, but a definition question is still answered."
+    },
+    {
+      "id": "a04", "kind": "answered_numeric", "lang": "uk",
+      "question": "Який був середній чек у 2018 році?",
+      "expected_status": "answered", "must_cite": ["aov"], "answer_contains": ["SELECT"],
+      "note": "No SQL tool yet: formula + SQL from the doc, no invented number."
+    },
+    {
+      "id": "a05", "kind": "ambiguous", "lang": "uk",
+      "question": "Як порахувати ДРР?",
+      "expected_status": "ambiguous", "must_cite": ["ad_spend_share", "acos"]
+    },
+    {
+      "id": "a06", "kind": "ambiguous", "lang": "en",
+      "question": "What is our DRR and how should we track it?",
+      "expected_status": "ambiguous", "must_cite": ["ad_spend_share", "acos"]
+    },
+    {
+      "id": "a07", "kind": "no_data", "lang": "uk",
+      "question": "Яка в нас конверсія сайту за 2018 рік?",
+      "expected_status": "no_data", "must_cite": ["conversion_rate"]
+    },
+    {
+      "id": "a08", "kind": "no_data", "lang": "en",
+      "question": "Calculate our customer acquisition cost for 2018.",
+      "expected_status": "no_data", "must_cite": ["cac"]
+    },
+    {
+      "id": "a09", "kind": "no_data", "lang": "en",
+      "question": "What share of our revenue did we spend on advertising last year?",
+      "expected_status": "no_data", "must_cite": ["ad_spend_share"]
+    },
+    {
+      "id": "o09", "kind": "off_topic_near", "lang": "en",
+      "question": "What is EBITDA and how is it calculated?",
+      "expected_status": "off_topic", "must_cite": []
+    },
+    {
+      "id": "o10", "kind": "off_topic_near", "lang": "uk",
+      "question": "Що таке NPS і як його рахувати?",
+      "expected_status": "off_topic", "must_cite": []
+    },
+    {
+      "id": "o01", "kind": "off_topic_far", "lang": "en",
+      "question": "What's the weather like in Kyiv tomorrow?",
+      "expected_status": "off_topic", "must_cite": [],
+      "note": "Below the similarity threshold: answered without an LLM call."
+    }
+  ]
+}

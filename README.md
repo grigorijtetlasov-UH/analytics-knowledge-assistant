@@ -5,7 +5,7 @@ exposed as a REST API and as an MCP server, with an evaluation suite.
 
 > Work in progress. Done: database, migrations and Olist data (milestone 1); metric
 > documents and their ingestion into pgvector (milestone 2); retrieval with measured
-> vector vs hybrid search (milestone 3). In progress: the `/ask` endpoint (milestone 4).
+> vector vs hybrid search (milestone 3); the `/ask` endpoint with answer evals (milestone 4).
 
 ## Retrieval results
 
@@ -34,6 +34,35 @@ Full reports with every miss: [vector baseline](evals/results/retrieval_baseline
 [hybrid](evals/results/retrieval_hybrid.md) ·
 [Ukrainian aliases](evals/results/retrieval_uk_aliases.md).
 Reproduce: `uv run python -m evals.run_evals --label <name>`.
+
+## Answer results
+
+12 `/ask` cases ([cases](evals/answer_cases.json)), each run 3 times per model at effort
+`low`: 4 answered (incl. a definition of a metric Olist cannot compute and a numeric
+question), 2 ambiguous («ДРР»), 3 no data, 3 off topic (2 near the domain, 1 unrelated,
+which the similarity gate rejects without an LLM call). Checks are formal: status, cited
+documents, a clarifying question for ambiguous cases, SQL in the numeric answer, answer
+language. Prices from claude.com/pricing (USD per 1M tokens, input / output).
+
+| model | price | passed | cost per question | mean latency |
+|---|---|---:|---:|---:|
+| Claude Opus 5.5 | $4 / $20 | 36/36 | $0.0117 | 4.2 s |
+| **Claude Sonnet 5.5 (default)** | $2 / $10 | **36/36** | **$0.0055** | 2.9 s |
+| Claude Haiku 5.5 | $0.10 / $0.50 | 32/36 | $0.0003 | 2.3 s |
+
+- **Sonnet 5.5 is the default: the cheapest model that passed every case** in all runs, at
+  47% of Opus's cost per question (≈ $5.50 per 1,000 questions vs $11.70). Switch with
+  `LLM_MODEL` in `.env`.
+- **Haiku 5.5 is ~20x cheaper than Sonnet but failed 4 of 36:** twice it answered an
+  English question about «ДРР» in Russian (the docs carry Russian aliases such as «доля
+  рекламы»), and twice it left the SQL out of a numeric answer. It also has no server-side
+  fallback on refusals.
+- **The system prompt is cached:** about 1,400 tokens per call are read from the cache.
+- **Caveat:** formal checks only, on cases written by the same person as the docs. Whether
+  the answers are *correct* is judged by an LLM on independent questions in milestone 6.
+
+Full report with every answer: [evals/results/answers_models.md](evals/results/answers_models.md).
+Reproduce: `uv run python -m evals.run_answer_evals --label models --repeats 3` (≈ $0.60).
 
 ## Setup
 
