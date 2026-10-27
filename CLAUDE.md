@@ -10,7 +10,7 @@ The owner must understand every line. Explain non-obvious decisions in comments 
 - Python 3.11+, FastAPI, Pydantic
 - PostgreSQL 16 + pgvector (Docker Compose)
 - LLM: Anthropic Claude API; embeddings: OpenAI `text-embedding-3-small` (configurable)
-- MCP: official Python SDK (`mcp`, FastMCP)
+- MCP: official Python SDK v2 (`mcp>=2`, `MCPServer`; v2 renamed FastMCP to MCPServer)
 - Evals: pytest + a JSON test set; LLM-as-judge for answer correctness
 - Tracing: Langfuse (optional, behind an env flag)
 - Tooling: uv, ruff, pytest, GitHub Actions

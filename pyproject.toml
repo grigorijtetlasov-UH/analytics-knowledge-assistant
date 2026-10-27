@@ -10,6 +10,8 @@ dependencies = [
     # REST API (app/api.py); request/response models are Pydantic, like the rest of the app.
     "fastapi>=0.162.0",
     # Embeddings API client (text-embedding-3-small); used only by app/embeddings.py.
+    # MCP server (mcp_server/server.py). v2: FastMCP is called MCPServer here.
+    "mcp>=2.3.0",
     "openai>=3.0",
     # psycopg 3: modern Postgres driver with first-class COPY support (used by the Olist loader).
     # [binary] bundles libpq, so nothing extra has to be installed on Windows or in CI.

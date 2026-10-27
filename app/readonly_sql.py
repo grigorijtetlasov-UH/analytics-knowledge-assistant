@@ -98,14 +98,25 @@ def run_readonly_sql(
                 cur.execute(query)
                 rows = cur.fetchmany(max_rows + 1)  # one FETCH; +1 detects truncation
                 columns = [column.name for column in cur.description or []]
+    # Messages start with "rejected by Postgres" so the user (and the model) can see that
+    # the database, not our code, refused the query.
     except errors.QueryCanceled as exc:
-        raise SqlError(f"query cancelled after the {timeout_ms} ms time limit") from exc
+        raise SqlError(
+            f"rejected by Postgres: query cancelled after the {timeout_ms} ms time limit"
+        ) from exc
     except errors.InsufficientPrivilege as exc:
         raise SqlError(
-            f"{exc.diag.message_primary}. Only the tables of schema olist can be read."
+            f"rejected by Postgres: {exc.diag.message_primary}. "
+            "The read-only role can read only the tables of schema olist."
+        ) from exc
+    except (errors.SyntaxError, errors.FeatureNotSupported) as exc:
+        # Inside DECLARE CURSOR, anything but one SELECT fails here; a real typo too.
+        raise SqlError(
+            f"rejected by Postgres: {exc.diag.message_primary}. "
+            "Only a single SELECT statement is allowed."
         ) from exc
     except psycopg.Error as exc:
-        raise SqlError(exc.diag.message_primary or str(exc)) from exc
+        raise SqlError(f"rejected by Postgres: {exc.diag.message_primary or exc}") from exc
 
     truncated = len(rows) > max_rows
     rows = rows[:max_rows]

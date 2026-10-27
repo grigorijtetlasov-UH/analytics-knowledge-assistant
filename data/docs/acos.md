@@ -1,7 +1,7 @@
 ---
 id: acos
 name: Advertising Cost of Sales
-aliases: [ACoS, advertising cost of sale, ROAS, return on ad spend, ДРР по рекламі, окупність реклами, ROAS навпаки]
+aliases: [ACoS, advertising cost of sale, ROAS, return on ad spend, DRR, ДРР, ДРР по рекламі, окупність реклами, ROAS навпаки]
 category: marketing
 unit: "%"
 direction: lower_is_better
